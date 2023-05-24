@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.FeatureManagement;
 using SampleApplication.Models;
 
 namespace SampleApplication.Services
@@ -6,14 +7,16 @@ namespace SampleApplication.Services
     public class ProductService : IProductService
     {
         private readonly IConfiguration _configuration;
+        private readonly IFeatureManager _featureManager;
 
-        public ProductService(IConfiguration configuration)
+        public ProductService(IConfiguration configuration, IFeatureManager featureManager)
         {
             _configuration = configuration;
+            _featureManager = featureManager;
         }
         private SqlConnection GetConnection()
         {
-            return new SqlConnection(_configuration.GetConnectionString("SqlConnStrings"));
+            return new SqlConnection(_configuration["SqlConnStrings"]);
         }
         public async Task<List<Product>> GetProducts()
         {
@@ -41,6 +44,11 @@ namespace SampleApplication.Services
             conn.Close();
 
             return products;
+        }
+
+        public async Task<bool> GetBetaVersion()
+        {
+            return await _featureManager.IsEnabledAsync("beta");
         }
     }
 }

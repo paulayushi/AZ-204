@@ -17,6 +17,7 @@ namespace SampleApplication.Controllers
         public async Task<IActionResult> Index()
         {
             var products = await _productService.GetProducts();
+            ViewBag.isBeta = await _productService.GetBetaVersion();
             return View(products);
         }
 

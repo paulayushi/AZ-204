@@ -5,7 +5,11 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">This is a list of Products</h1>
+    <h1 class="display-4">This is a list of Products - Staging</h1>
+    @if (ViewBag.isBeta)
+    {
+        <h3>Beta version</h3>
+    }
     <table class="table table-bordered">
         <thead>
             <tr>
