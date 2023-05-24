@@ -5,7 +5,7 @@ namespace SampleApplication.Services
 {
     public class ProductService : IProductService
     {
-        private static readonly string _dbSource = "appserver1006.database.windows.net";
+        private static readonly string _dbSource = "dbserver1005.database.windows.net";
         private static readonly string _dbUserName = "superadmin";
         private static readonly string _dbPassword = "Reyansh@1987";
         private static readonly string _dbName = "appdb";
