@@ -5,21 +5,15 @@ namespace SampleApplication.Services
 {
     public class ProductService : IProductService
     {
-        private static readonly string _dbSource = "dbserver1005.database.windows.net";
-        private static readonly string _dbUserName = "superadmin";
-        private static readonly string _dbPassword = "Reyansh@1987";
-        private static readonly string _dbName = "appdb";
+        private readonly IConfiguration _configuration;
+
+        public ProductService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         private SqlConnection GetConnection()
         {
-            var builder = new SqlConnectionStringBuilder()
-            {
-                DataSource = _dbSource,
-                UserID = _dbUserName,
-                Password = _dbPassword,
-                InitialCatalog = _dbName
-            };
-
-            return new SqlConnection(builder.ConnectionString);
+            return new SqlConnection(_configuration.GetConnectionString("SqlConnStrings"));
         }
         public async Task<List<Product>> GetProducts()
         {
