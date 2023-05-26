@@ -16,32 +16,38 @@ namespace SampleApplication.Services
         }
         private SqlConnection GetConnection()
         {
-            return new SqlConnection(_configuration["SqlConnStrings"]);
+            return new SqlConnection(_configuration.GetConnectionString("SqlConnStrings"));
         }
         public async Task<List<Product>> GetProducts()
         {
             var products = new List<Product>();
-            var sqlStatement = "SELECT ProductId, ProductName, Quantity FROM Products";
-            var conn = GetConnection();
-            var command = new SqlCommand(sqlStatement, conn);
-            conn.Open();
-
-            using (SqlDataReader reader = await command.ExecuteReaderAsync())
+            //Azure Fn calls
+            using(var httpClient = new HttpClient())
             {
-                while (reader.Read())
-                {
-                    var product = new Product
-                    {
-                        ProductId = reader.GetInt32(0),
-                        ProductName = reader.GetString(1),
-                        Quantity = reader.GetInt32(2)
-                    };
+                httpClient.BaseAddress = new Uri("https://productfncapp.azurewebsites.net/api/");
+                products = await httpClient.GetFromJsonAsync<List<Product>>("GetProducts?code=6PGuw6FC7LrUEX834WeRwfWK-IUNFT2ZGObZIYS8x2JlAzFuCwaVQA==");
+            }
+            //var sqlStatement = "SELECT ProductId, ProductName, Quantity FROM Products";
+            //var conn = GetConnection();
+            //var command = new SqlCommand(sqlStatement, conn);
+            //conn.Open();
 
-                    products.Add(product);
-                }
-            };
+            //using (SqlDataReader reader = await command.ExecuteReaderAsync())
+            //{
+            //    while (reader.Read())
+            //    {
+            //        var product = new Product
+            //        {
+            //            ProductId = reader.GetInt32(0),
+            //            ProductName = reader.GetString(1),
+            //            Quantity = reader.GetInt32(2)
+            //        };
 
-            conn.Close();
+            //        products.Add(product);
+            //    }
+            //};
+
+            //conn.Close();
 
             return products;
         }
