@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: containerregistry1005.azurecr.io/appmysql:latest
+        name: mysql
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3306
+          name: mysql
+        imageRegistryCredentials:
+           - server: containerregistry1005.azurecr.io
+             username: containerregistry1005
+             password: yw57o1FL5zASw8/LykrzEf5AesljNcu1CBHVNXiOIO+ACRBp0x+0
